@@ -5,6 +5,7 @@
 // that can be found in the LICENSE file exposed on Github (readium) in the project repository.
 // ==LICENSE-END==
 
+import { AbortSignal } from "abort-controller";
 import timeoutSignal from "timeout-signal";
 import * as debug_ from "debug";
 import { promises as fsp } from "fs";
@@ -17,7 +18,6 @@ import {
 import { decryptPersist, encryptPersist } from "readium-desktop/main/fs/persistCrypto";
 import { IS_DEV } from "readium-desktop/preprocessor-directives";
 import { tryCatch, tryCatchSync } from "readium-desktop/utils/tryCatch";
-import { resolve } from "url";
 
 import { diMainGet, opdsAuthFilePath } from "../di";
 import { fetchWithCookie } from "./fetch";
@@ -28,22 +28,25 @@ const debug = debug_(filename_);
 
 const DEFAULT_HTTP_TIMEOUT = 30000;
 
-// https://github.com/node-fetch/node-fetch/blob/master/src/utils/is-redirect.js
-const redirectStatus = new Set([301, 302, 303, 307, 308]);
-
 let authenticationToken: Record<string, IOpdsAuthenticationToken> = {};
 
-/**
- * Redirect code matching
- *
- * @param {number} code - Status code
- * @return {boolean}
- */
-const isRedirect = (code: number) => {
-    return redirectStatus.has(code);
-};
+// Redirect now handled internally, see https://github.com/valeriangalliat/fetch-cookie/blob/master/CHANGELOG.md#200---2022-02-17
+//
+// // https://github.com/node-fetch/node-fetch/blob/master/src/utils/is-redirect.js
+// const redirectStatus = new Set([301, 302, 303, 307, 308]);
+// /**
+//  * Redirect code matching
+//  *
+//  * @param {number} code - Status code
+//  * @return {boolean}
+//  */
+// const isRedirect = (code: number) => {
+//     return redirectStatus.has(code);
+// };
 
-const FOLLOW_REDIRECT_COUNTER = 20;
+// 20 is fetch-cookie's default
+// https://github.com/valeriangalliat/fetch-cookie#max-redirects
+const MAX_FOLLOW_REDIRECT = 20;
 
 export const httpSetHeaderAuthorization =
     (type: string, credentials: string) => `${type} ${credentials}`;
@@ -161,7 +164,7 @@ export const wipeAuthenticationTokenStorage = async () => {
 export async function httpFetchRawResponse(
     url: string | URL,
     options: THttpOptions = {},
-    redirectCounter = 0,
+    // redirectCounter = 0,
     locale = tryCatchSync(() => diMainGet("store")?.getState()?.i18n?.locale, filename_) || "en-US",
 ): Promise<THttpResponse> {
 
@@ -170,7 +173,10 @@ export async function httpFetchRawResponse(
         : new Headers(options.headers || {});
     (options.headers as Headers).set("user-agent", "readium-desktop");
     (options.headers as Headers).set("accept-language", `${locale},en-US;q=0.7,en;q=0.5`);
-    options.redirect = "manual"; // handle cookies
+
+    // Redirect now handled internally, see https://github.com/valeriangalliat/fetch-cookie/blob/master/CHANGELOG.md#200---2022-02-17
+    //
+    // options.redirect = "manual"; // handle cookies
 
     // https://github.com/node-fetch/node-fetch#custom-agent
     // httpAgent doesn't works // err: Protocol "http:" not supported. Expected "https:
@@ -199,24 +205,68 @@ export async function httpFetchRawResponse(
     // }
     options.timeout = options.timeout || DEFAULT_HTTP_TIMEOUT;
 
+    options.maxRedirect = MAX_FOLLOW_REDIRECT;
+
+    let timeSignal: AbortSignal | undefined;
     let timeout: NodeJS.Timeout | undefined;
     if (!options.signal) {
-        options.signal = timeoutSignal(options.timeout);
+        timeSignal = timeoutSignal(options.timeout);
+        options.signal = timeSignal;
+        (options.signal as any).__abortReasonTimeout = true;
     } else if (options.abortController) {
         timeout = setTimeout(() => {
             timeout = undefined;
-            try {
-                options.abortController.abort();
-            } catch {}
+            if (options.abortController?.signal) {
+                (options.abortController.signal as any).__abortReasonTimeout = true;
+            }
+            // normally implied: options.signal === options.abortController.signal (see downloader.ts)
+            // ... but just in case another signal is configured:
+            if (options.signal) {
+                (options.signal as any).__abortReasonTimeout = true;
+            }
+            if (options.abortController && !options.abortController.signal?.aborted) {
+                try {
+                    options.abortController.abort();
+                } catch {}
+            }
         }, options.timeout);
+    } else {
+        // TODO: handle signal without our own downloader.ts AbortController?
+        // (probably not needed as we control the full fetch lifecycle, there are no such occurences in our codebase)
+        // const controller = new AbortController();
+        // timeout = setTimeout(() => {
+        //     timeout = undefined;
+        //     if (controller?.signal) {
+        //         (controller.signal as any).__abortReasonTimeout = true;
+        //     }
+        //     // propagate the timeout state to any other existing signal,
+        //     // so we can test in the fetch catch() / promise rejection
+        //     if (options.signal) {
+        //         (options.signal as any).__abortReasonTimeout = true;
+        //     }
+        //     if (controller) {
+        //         try {
+        //             controller.abort(); // not bound to fetch, so does nothing!
+        //         } catch {}
+        //     }
+        // }, options.timeout);
     }
 
     let response: Response;
     try {
         response = await fetchWithCookie(url.toString(), options);
     } finally {
+        // module-level weakmap of timeouts,
+        // see https://github.com/node-fetch/timeout-signal/blob/main/index.js
+        if (timeSignal) {
+            try {
+                timeoutSignal.clear(timeSignal);
+            } catch {}
+        }
+        // our local, closure-level timeout
         if (timeout) {
             clearTimeout(timeout);
+            timeout = undefined;
         }
     }
 
@@ -229,40 +279,66 @@ export async function httpFetchRawResponse(
     debug("status code :", response.status);
     debug("status text :", response.statusText);
 
-    // manual Redirect to handle cookies
-    // https://github.com/node-fetch/node-fetch/blob/0d35ddbf7377a483332892d2b625ec8231fa6181/src/index.js#L129
-    if (isRedirect(response.status)) {
+    // Redirect now handled internally, see https://github.com/valeriangalliat/fetch-cookie/blob/master/CHANGELOG.md#200---2022-02-17
+    //
+    // // manual Redirect to handle cookies
+    // // https://github.com/node-fetch/node-fetch/blob/0d35ddbf7377a483332892d2b625ec8231fa6181/src/index.js#L129
+    // if (isRedirect(response.status)) {
 
-        const location = response.headers.get("Location");
-        debug("Redirect", response.status, "to: ", location);
+    //     const location = response.headers.get("Location");
+    //     debug("Redirect", response.status, "to: ", location);
 
-        if (location) {
-            const locationUrl = resolve(response.url, location);
+    //     if (location) {
+    //         const locationUrl = resolve(response.url, location);
 
-            if (redirectCounter > FOLLOW_REDIRECT_COUNTER) {
-                throw new Error(`maximum redirect reached at: ${url}`);
-            }
+    //         if (redirectCounter > FOLLOW_REDIRECT_COUNTER) {
+    //             throw new Error(`maximum redirect reached at: ${url}`);
+    //         }
 
-            if (
-                response.status === 303 ||
-                ((response.status === 301 || response.status === 302) && options.method === "POST")
-            ) {
-                options.method = "GET";
-                options.body = undefined;
-                if (options.headers) {
-                    if (!(options.headers instanceof Headers)) {
-                        options.headers = new Headers(options.headers);
-                    }
-                    (options.headers as Headers).delete("content-length");
-                }
-            }
+    //         if (
+    //             response.status === 303 ||
+    //             ((response.status === 301 || response.status === 302) && options.method === "POST")
+    //         ) {
+    //             options.method = "GET";
+    //             options.body = undefined;
+    //             if (options.headers) {
+    //                 if (!(options.headers instanceof Headers)) {
+    //                     options.headers = new Headers(options.headers);
+    //                 }
+    //                 (options.headers as Headers).delete("content-length");
+    //             }
+    //         }
 
-            return await httpFetchRawResponse(locationUrl, options, redirectCounter + 1, locale);
-        } else {
-            debug("No location URL to redirect");
-        }
-    }
+    //         return await httpFetchRawResponse(locationUrl, options, redirectCounter + 1, locale);
+    //     } else {
+    //         debug("No location URL to redirect");
+    //     }
+    // }
 
+    // ALTERNATIVELY, Promise.race()
+    //
+    // See: https://github.com/simonplend/how-to-cancel-an-http-request-in-node-js/blob/main/example-node-fetch.mjs
+    //
+    // import { setTimeout } from "node:timers/promises";
+    // const cancelRequest = new AbortController();
+    // const cancelTimeout = new AbortController();
+    // const fetchWithCookieResponsePromise = async () => {
+    //     try {
+    //         // response
+    //     } finally {
+    //         cancelTimeout.abort();
+    //     }
+    // }
+    // const timeoutPromise = async () => {
+    //     try {
+    //         await setTimeout(options.timeout, undefined, { signal: cancelTimeout.signal });
+    //         cancelRequest.abort();
+    //     } catch (_err) {
+    //         return;
+    //     }
+    //     throw new Error(`HTTP fetch request timeout ${options.timeout}ms`);
+    // };
+    // return Promise.race([fetchWithCookieResponsePromise, timeoutPromise()]);
     return response;
 }
 
@@ -292,7 +368,7 @@ export async function httpFetchFormattedResponse<TData = undefined>(
     };
 
     try {
-        const response = await httpFetchRawResponse(url, options, 0, locale);
+        const response = await httpFetchRawResponse(url, options, locale);
 
         debug("Response headers :");
         debug({ ...response.headers.raw() });
@@ -323,7 +399,7 @@ export async function httpFetchFormattedResponse<TData = undefined>(
         debug("url: ", url);
         debug("options: ", options);
 
-        if (errStr.includes("timeout")) { // err.name === "FetchError"
+        if (errStr.includes("timeout") || (options?.signal as any)?.__abortReasonTimeout) { // err.name === "FetchError"
             result = {
                 isAbort: false,
                 isNetworkError: true,
