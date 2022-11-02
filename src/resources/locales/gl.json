@@ -108,7 +108,8 @@
         "released": "Publicado en",
         "sort": "Ordenar por",
         "tagCount": "Número de etiquetas",
-        "tags": "Etiquetas"
+        "tags": "Etiquetas",
+        "update": ""
     },
     "dialog": {
         "closeModalWindow": "Pechar esta xanela modal",
@@ -201,9 +202,47 @@
         },
         "next": "Seguinte",
         "previous": "Anterior",
-        "shelf": "Estante"
+        "shelf": "Estante",
+        "updateForm": {
+            "name": "",
+            "namePlaceholder": "",
+            "title": "",
+            "updateButton": "",
+            "url": "",
+            "urlPlaceholder": ""
+        }
     },
     "publication": {
+        "accessibility": {
+            "accessModeSufficient": {
+                "textual": ""
+            },
+            "accessibilityFeature": {
+                "alternativeText": "",
+                "displayTransformability": "",
+                "longDescription": "",
+                "printPageNumbers": "",
+                "readingOrder": "",
+                "synchronizedAudioText": "",
+                "tableOfContents": ""
+            },
+            "accessibilityHazard": {
+                "flashing": "",
+                "motion": "",
+                "name": "",
+                "noFlashing": "",
+                "noMotion": "",
+                "noSimulation": "",
+                "noSound": "",
+                "none": "",
+                "simulation": "",
+                "sound": "",
+                "unknown": ""
+            },
+            "moreInformation": "",
+            "name": "",
+            "noA11y": ""
+        },
         "audio": {
             "tracks": "Pistas"
         },
@@ -278,6 +317,8 @@
             "goToError": "Este salto de páxina non existe",
             "goToPlaceHolder": "Introduce un número de páxina",
             "goToTitle": "Ir a páxina",
+            "historyNext": "",
+            "historyPrevious": "",
             "infoTitle": "Información",
             "magnifyingGlassButton": "buscar na publicación",
             "openTableOfContentsTitle": "Navegación",

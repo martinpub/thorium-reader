@@ -108,7 +108,8 @@
         "released": "Дата издания",
         "sort": "Сортировать по",
         "tagCount": "Количество тегов",
-        "tags": "Теги"
+        "tags": "Теги",
+        "update": ""
     },
     "dialog": {
         "closeModalWindow": "Закрыть это модальное окно",
@@ -201,9 +202,47 @@
         },
         "next": "Следующая",
         "previous": "Прошлая",
-        "shelf": "Полка"
+        "shelf": "Полка",
+        "updateForm": {
+            "name": "",
+            "namePlaceholder": "",
+            "title": "",
+            "updateButton": "",
+            "url": "",
+            "urlPlaceholder": ""
+        }
     },
     "publication": {
+        "accessibility": {
+            "accessModeSufficient": {
+                "textual": ""
+            },
+            "accessibilityFeature": {
+                "alternativeText": "",
+                "displayTransformability": "",
+                "longDescription": "",
+                "printPageNumbers": "",
+                "readingOrder": "",
+                "synchronizedAudioText": "",
+                "tableOfContents": ""
+            },
+            "accessibilityHazard": {
+                "flashing": "",
+                "motion": "",
+                "name": "",
+                "noFlashing": "",
+                "noMotion": "",
+                "noSimulation": "",
+                "noSound": "",
+                "none": "",
+                "simulation": "",
+                "sound": "",
+                "unknown": ""
+            },
+            "moreInformation": "",
+            "name": "",
+            "noA11y": ""
+        },
         "audio": {
             "tracks": "Треки"
         },
@@ -278,6 +317,8 @@
             "goToError": "Этот разрыв страницы не существует",
             "goToPlaceHolder": "Введите номер страницы",
             "goToTitle": "Перейти на страницу",
+            "historyNext": "",
+            "historyPrevious": "",
             "infoTitle": "информация",
             "magnifyingGlassButton": "искать в книге",
             "openTableOfContentsTitle": "навигация",

@@ -108,7 +108,8 @@
         "released": "Pubblicato il",
         "sort": "Ordina per",
         "tagCount": "Contatore Tag",
-        "tags": "Tags"
+        "tags": "Tags",
+        "update": ""
     },
     "dialog": {
         "closeModalWindow": "Chiudi questa finestra modale",
@@ -201,9 +202,47 @@
         },
         "next": "Prossimo",
         "previous": "Precedente",
-        "shelf": "Mensola"
+        "shelf": "Mensola",
+        "updateForm": {
+            "name": "",
+            "namePlaceholder": "",
+            "title": "",
+            "updateButton": "",
+            "url": "",
+            "urlPlaceholder": ""
+        }
     },
     "publication": {
+        "accessibility": {
+            "accessModeSufficient": {
+                "textual": ""
+            },
+            "accessibilityFeature": {
+                "alternativeText": "",
+                "displayTransformability": "",
+                "longDescription": "",
+                "printPageNumbers": "",
+                "readingOrder": "",
+                "synchronizedAudioText": "",
+                "tableOfContents": ""
+            },
+            "accessibilityHazard": {
+                "flashing": "",
+                "motion": "",
+                "name": "",
+                "noFlashing": "",
+                "noMotion": "",
+                "noSimulation": "",
+                "noSound": "",
+                "none": "",
+                "simulation": "",
+                "sound": "",
+                "unknown": ""
+            },
+            "moreInformation": "",
+            "name": "",
+            "noA11y": ""
+        },
         "audio": {
             "tracks": "Tracce"
         },
@@ -278,6 +317,8 @@
             "goToError": "Questo punto di pagina non esiste",
             "goToPlaceHolder": "Inserisci il numero della pagina",
             "goToTitle": "Vai alla pagina",
+            "historyNext": "",
+            "historyPrevious": "",
             "infoTitle": "informazione",
             "magnifyingGlassButton": "",
             "openTableOfContentsTitle": "navigazione",

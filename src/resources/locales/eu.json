@@ -108,7 +108,8 @@
         "released": "Hemen argitaratua",
         "sort": "Ordenatu honen arabera",
         "tagCount": "Etiketa kopurua",
-        "tags": "Etiketak"
+        "tags": "Etiketak",
+        "update": ""
     },
     "dialog": {
         "closeModalWindow": "Itxi modu-leiho hau",
@@ -201,9 +202,47 @@
         },
         "next": "Hurrengoa",
         "previous": "Aurrekoa",
-        "shelf": "Apala"
+        "shelf": "Apala",
+        "updateForm": {
+            "name": "",
+            "namePlaceholder": "",
+            "title": "",
+            "updateButton": "",
+            "url": "",
+            "urlPlaceholder": ""
+        }
     },
     "publication": {
+        "accessibility": {
+            "accessModeSufficient": {
+                "textual": ""
+            },
+            "accessibilityFeature": {
+                "alternativeText": "",
+                "displayTransformability": "",
+                "longDescription": "",
+                "printPageNumbers": "",
+                "readingOrder": "",
+                "synchronizedAudioText": "",
+                "tableOfContents": ""
+            },
+            "accessibilityHazard": {
+                "flashing": "",
+                "motion": "",
+                "name": "",
+                "noFlashing": "",
+                "noMotion": "",
+                "noSimulation": "",
+                "noSound": "",
+                "none": "",
+                "simulation": "",
+                "sound": "",
+                "unknown": ""
+            },
+            "moreInformation": "",
+            "name": "",
+            "noA11y": ""
+        },
         "audio": {
             "tracks": "Tracks"
         },
@@ -278,6 +317,8 @@
             "goToError": "Orrialde-jauzi hori ez dago",
             "goToPlaceHolder": "Sartu orrialde-zenbaki bat",
             "goToTitle": "Orrialdera joan",
+            "historyNext": "",
+            "historyPrevious": "",
             "infoTitle": "Informazioa",
             "magnifyingGlassButton": "bilatu argitalpenean",
             "openTableOfContentsTitle": "Nabigazioa",

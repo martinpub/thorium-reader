@@ -108,7 +108,8 @@
         "released": "Publicat en",
         "sort": "Ordenar per",
         "tagCount": "Número d'etiquetes",
-        "tags": "Etiquetes"
+        "tags": "Etiquetes",
+        "update": ""
     },
     "dialog": {
         "closeModalWindow": "Tancar aquesta finestra modal",
@@ -201,9 +202,47 @@
         },
         "next": "Següent",
         "previous": "Anterior",
-        "shelf": "Prestatge"
+        "shelf": "Prestatge",
+        "updateForm": {
+            "name": "",
+            "namePlaceholder": "",
+            "title": "",
+            "updateButton": "",
+            "url": "",
+            "urlPlaceholder": ""
+        }
     },
     "publication": {
+        "accessibility": {
+            "accessModeSufficient": {
+                "textual": ""
+            },
+            "accessibilityFeature": {
+                "alternativeText": "",
+                "displayTransformability": "",
+                "longDescription": "",
+                "printPageNumbers": "",
+                "readingOrder": "",
+                "synchronizedAudioText": "",
+                "tableOfContents": ""
+            },
+            "accessibilityHazard": {
+                "flashing": "",
+                "motion": "",
+                "name": "",
+                "noFlashing": "",
+                "noMotion": "",
+                "noSimulation": "",
+                "noSound": "",
+                "none": "",
+                "simulation": "",
+                "sound": "",
+                "unknown": ""
+            },
+            "moreInformation": "",
+            "name": "",
+            "noA11y": ""
+        },
         "audio": {
             "tracks": "Pistes"
         },
@@ -278,6 +317,8 @@
             "goToError": "Aquest salt de pàgina no existeix",
             "goToPlaceHolder": "Introdueix un número de pàgina",
             "goToTitle": "Anar a pàgina",
+            "historyNext": "",
+            "historyPrevious": "",
             "infoTitle": "Informació",
             "magnifyingGlassButton": "cercar a la publicació",
             "openTableOfContentsTitle": "Navegació",
