@@ -338,7 +338,7 @@
         },
         "settings": {
             "column": {
-                "auto": "Automatiskt",
+                "auto": "Standard",
                 "one": "1 kol",
                 "oneTitle": "en kolumn",
                 "title": "Kolumner",
@@ -431,9 +431,9 @@
             "languageChoice": "Språkval"
         },
         "session": {
-            "no": "Avaktivera",
-            "title": "Spara session",
-            "yes": "Aktivera"
+            "no": "Disable",
+            "title": "Save session",
+            "yes": "Enable"
         }
     }
 }
