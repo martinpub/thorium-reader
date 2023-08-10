@@ -5,12 +5,16 @@
 // that can be found in the LICENSE file exposed on Github (readium) in the project repository.
 // ==LICENSE-END==
 
+import { IStringMap } from "@r2-shared-js/models/metadata-multilang";
+
 import { OPDSAvailabilityEnum } from "@r2-opds-js/opds/opds2/opds2-availability";
 import { OPDSCurrencyEnum } from "@r2-opds-js/opds/opds2/opds2-price";
 
 import { Identifiable } from "../models/identifiable";
 
 // import { JsonMap } from "readium-desktop/typings/json";
+
+export const OPDS_OPEN_SEARCH_DATA_SEPARATOR = "^$%*£@";
 
 export interface IOpdsFeedView extends Identifiable {
     title: string;
@@ -27,7 +31,11 @@ export interface IOpdsPublicationView {
     // r2OpdsPublicationJson?: JsonMap;
     // Legacy Base64 data blobs
     // r2OpdsPublicationBase64?: string;
-    title: string;
+
+    // see PublicationView (polymorphic NormalOrOpdsPublicationView / publicationViewMaybeOpds)
+    // documentTitle vs. publicationTitle
+    documentTitle: string;
+
     authors: IOpdsContributorView[];
     publishers?: IOpdsContributorView[];
     workIdentifier?: string;
@@ -48,6 +56,19 @@ export interface IOpdsPublicationView {
 
     duration?: number;
     nbOfTracks?: number;
+
+    a11y_accessMode?: string[];
+    a11y_accessibilityFeature?: string[];
+    a11y_accessibilityHazard?: string[];
+
+    a11y_certifiedBy?: string[];
+    a11y_certifierCredential?: string[];
+    a11y_certifierReport?: string[];
+    a11y_conformsTo?: string[];
+
+    a11y_accessModeSufficient?: (string[])[];
+
+    a11y_accessibilitySummary?: string | IStringMap; // convertMultiLangStringToString
 }
 
 export interface IOpdsNavigationLinkView {
@@ -97,7 +118,7 @@ export interface IOpdsAuthView {
 }
 
 export interface IOPDSPropertiesView {
-    indirectAcquisitionType?: string | undefined;
+    indirectAcquisitionTypes?: { top: string, child: string | undefined} | undefined;
     numberOfItems?: number | undefined;
     priceValue?: number | undefined;
     priceCurrency?: OPDSCurrencyEnum | undefined;

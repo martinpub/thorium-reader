@@ -71,6 +71,7 @@ declare const styles: {
   readonly "option_colonne2": string;
   readonly "option_auto": string;
   readonly "option_justif": string;
+  readonly "option_start": string;
   readonly "scroll_option": string;
   readonly "page_option": string;
   readonly "line_tab_content": string;
@@ -78,6 +79,8 @@ declare const styles: {
   readonly "out_of_screen": string;
   readonly "reader_footer": string;
   readonly "HIDE_CURSOR_CLASS_foot": string;
+  readonly "history": string;
+  readonly "disabled": string;
   readonly "arrows": string;
   readonly "track_reading_wrapper": string;
   readonly "track_reading_wrapper_noArrows": string;
@@ -98,14 +101,6 @@ declare const styles: {
   readonly "divina_grid_item": string;
   readonly "colorChange": string;
   readonly "___DEBUG___READER_APP_CSS": string;
-  readonly "___DEBUG___FOCUS_MIXIN_CSS": string;
-  readonly "R2_CSS_CLASS__KEYBOARD_INTERACT": string;
-  readonly "R2_CSS_CLASS__FORCE_NO_FOCUS_OUTLINE": string;
-  readonly "body_element": string;
-  readonly "readium2ElectronAnimation_TARGET": string;
-  readonly "R2_CSS_CLASS__FORCE_NO_TARGET_OUTLINE": string;
-  readonly "___DEBUG___FOCUS_CSS": string;
-  readonly "___DEBUG___VARIABLE_CSS": string;
 };
 export = styles;
 

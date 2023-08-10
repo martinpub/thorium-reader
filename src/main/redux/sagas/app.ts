@@ -39,10 +39,15 @@ export function* init() {
 
     app.setAppUserModelId("io.github.edrlab.thorium");
 
-    // 'thorium' is registered for MacOS too
+    // https://www.electronjs.org/fr/docs/latest/api/app#appsetasdefaultprotocolclientprotocol-path-args
+    // https://www.electron.build/generated/platformspecificbuildoptions
+    // Define custom protocol handler. Deep linking works on packaged versions of the application!
     if (!app.isDefaultProtocolClient("opds")) {
-        // Define custom protocol handler. Deep linking works on packaged versions of the application!
         app.setAsDefaultProtocolClient("opds");
+    }
+
+    if (!app.isDefaultProtocolClient("thorium")) {
+        app.setAsDefaultProtocolClient("thorium");
     }
 
     // moved to saga/persist.ts
@@ -101,6 +106,23 @@ export function* init() {
     yield call(() => app.whenReady());
 
     debug("Main app ready");
+
+    if (IS_DEV) {
+        // app.whenReady().then(() => {
+        // });
+        const {
+            default: installExtension,
+            REACT_DEVELOPER_TOOLS,
+            REDUX_DEVTOOLS,
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
+        } = require("electron-devtools-installer");
+
+        [REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS].forEach((extension) => {
+            installExtension(extension)
+            .then((name: string) => debug("electron-devtools-installer OK (app init): ", name))
+            .catch((err: Error) => debug("electron-devtools-installer ERROR (app init): ", err));
+        });
+    }
 
     // register file protocol to link locale file to renderer
     protocol.registerFileProtocol("store",

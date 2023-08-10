@@ -11,14 +11,13 @@ import {
 
 import * as React from "react";
 import { TPublication } from "readium-desktop/common/type/publication.type";
-import * as stylesModals from "readium-desktop/renderer/assets/styles/components/modals.css";
 
 import Cover from "../../Cover";
 import Loader from "../../Loader";
 import Dialog from "../Dialog";
 
 export interface IProps extends TranslatorProps {
-    publication: TPublication;
+    publicationViewMaybeOpds: TPublication;
     coverZoom: boolean;
     toggleCoverZoomCb: (coverZoom: boolean) => void;
     closeDialogCb: () => void;
@@ -26,11 +25,10 @@ export interface IProps extends TranslatorProps {
 
 const PublicationInfoManager: React.FC<IProps> = (props) => {
 
-    const { publication, coverZoom, toggleCoverZoomCb, closeDialogCb } = props;
+    const { publicationViewMaybeOpds, coverZoom, toggleCoverZoomCb, closeDialogCb } = props;
 
     return (
         <Dialog
-            open={true}
             close={
                 () =>
                     coverZoom
@@ -38,14 +36,14 @@ const PublicationInfoManager: React.FC<IProps> = (props) => {
                     : closeDialogCb()
             }
             title={props.__("catalog.bookInfo")}
+            noFooter={true}
         >
-            <div className={stylesModals.modal_dialog_body}>
                 {
-                    publication?.title
+                    publicationViewMaybeOpds?.documentTitle
                         ? (
                             coverZoom
                                 ? <Cover
-                                    publicationViewMaybeOpds={publication}
+                                    publicationViewMaybeOpds={publicationViewMaybeOpds}
                                     coverType="cover"
                                     onClick={
                                         () => toggleCoverZoomCb(coverZoom)
@@ -65,7 +63,6 @@ const PublicationInfoManager: React.FC<IProps> = (props) => {
                         )
                         : <Loader></Loader>
                 }
-            </div>
         </Dialog>
     );
 };
